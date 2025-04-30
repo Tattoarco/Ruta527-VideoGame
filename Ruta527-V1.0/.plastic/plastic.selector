@@ -1,0 +1,4 @@
+repository "Ruta527-V1.0@Juanda0410@cloud"
+  path "/"
+    br "/main"
+    co "/main"
