@@ -4,25 +4,24 @@ using UnityEngine;
 
 public class PlatforMovement_1 : MonoBehaviour
 {
-    public Transform pointA;
-    public float speed = 2f;
-    public Transform player;
-    public float triggerDistance = 0.3f; // Activación muy cercana
+    [SerializeField] private Transform point; // Punto al que se moverá la plataforma
+    [SerializeField] private float speed = 2f;
 
     private bool shouldMove = false;
 
     void Update()
     {
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-
-        if (distanceToPlayer > triggerDistance)
-        {
-            shouldMove = true;
-        }
-
         if (shouldMove)
         {
-            transform.position = Vector2.MoveTowards(transform.position, pointA.position, speed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, point.position, speed * Time.deltaTime);
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            shouldMove = true;
         }
     }
 }
