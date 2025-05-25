@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
 public class KeypadManager : MonoBehaviour
 {
     public GameObject keypadPanel;
@@ -13,12 +12,18 @@ public class KeypadManager : MonoBehaviour
     public TextMeshProUGUI displayText;
     public List<Button> buttons;
     public Color pressedColor = Color.gray;
-    public string correctCode = "1234";
+    public string correctCode = "2810";
+
+    public AudioClip keyPressSound;
+    private AudioSource audioSource;
 
     private string currentInput = "";
 
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
+
         keypadPanel.SetActive(false);
         displayText.text = "";
 
@@ -40,9 +45,15 @@ public class KeypadManager : MonoBehaviour
     {
         string number = buttonPressed.GetComponentInChildren<TMP_Text>().text;
         currentInput += number;
-
         displayText.text = currentInput;
 
+        // Reproducir sonido
+        if (keyPressSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(keyPressSound);
+        }
+
+        // Cambiar color
         ColorBlock colors = buttonPressed.colors;
         colors.normalColor = pressedColor;
         buttonPressed.colors = colors;
@@ -71,9 +82,9 @@ public class KeypadManager : MonoBehaviour
     {
         keypadPanel.SetActive(false);
         closedDoor.SetActive(false);
-        castleFront.SetActive(true); // Mostrar parte frontal
+        castleFront.SetActive(true);
         yield return new WaitForSeconds(1f);
-        castleFront.SetActive(false); // Ocultar parte frontal
+        castleFront.SetActive(false);
     }
 
     private void ResetButtonColors()

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -9,6 +7,7 @@ public class Enemy : MonoBehaviour
     public float speed = 2f;
 
     private Vector3 CurrentAssignment;
+    private bool hasDamagedPlayer = false;
 
     private void Start()
     {
@@ -21,8 +20,13 @@ public class Enemy : MonoBehaviour
 
         if (Vector3.Distance(transform.position, CurrentAssignment) < 0.1f)
         {
-            // Cambia de dirección
+            // Cambia el destino
             CurrentAssignment = CurrentAssignment == pointA.position ? pointB.position : pointA.position;
+
+            // Invierte visualmente el sprite en el eje X
+            Vector3 theScale = transform.localScale;
+            theScale.x *= -1;
+            transform.localScale = theScale;
         }
     }
 
@@ -30,7 +34,18 @@ public class Enemy : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            GameManager.Instance.LoseHealth(); // Llama al método para restar vida
+            GameManager.Instance.LoseHealth();
+            hasDamagedPlayer = true;
         }
+    }
+
+    public void TakeDamage()
+    {
+        if (hasDamagedPlayer)
+        {
+            GameManager.Instance.RecoverHealth(); // Recupera vida si antes le hizo daño
+        }
+
+        Destroy(gameObject); // Destruye el enemigo
     }
 }

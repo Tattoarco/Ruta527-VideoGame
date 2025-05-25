@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 
     public int TotalPoints {get; private set;}
 
-	private int health = 3;
+	private int health = 5;
 
     private void Awake()
     {
@@ -31,6 +31,15 @@ public class GameManager : MonoBehaviour
 		hud.UpdatePoints(TotalPoints);
     }
 
+    public void RemovePoints(int pointsToRemove)
+    {
+        TotalPoints -= pointsToRemove;
+        if (TotalPoints < 0)
+            TotalPoints = 0;
+
+        hud.UpdatePoints(TotalPoints);
+    }
+
     public void LoseHealth()
     {
         if (health > 0)
@@ -47,7 +56,7 @@ public class GameManager : MonoBehaviour
 
 
     public bool RecoverHealth() {
-		if (health == 3)
+		if (health == 5)
 		{
 			return false;
 		}
