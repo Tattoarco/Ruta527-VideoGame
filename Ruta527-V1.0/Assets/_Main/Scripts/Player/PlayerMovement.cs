@@ -45,41 +45,52 @@ public class PlayerMovement : MonoBehaviour
     {
         float moveX = 0f;
 
+        bool isCrouching = Input.GetKey(KeyCode.S);
+        animator.SetBool("isCrouching", isCrouching);
+
         if (Input.GetKey(KeyCode.A)) moveX = -1f;
         else if (Input.GetKey(KeyCode.D)) moveX = 1f;
 
-        rb.velocity = new Vector2(moveX * speed, rb.velocity.y);
+        // Solo mover si no está quieto y agachado
+        if (!isCrouching || moveX != 0)
+            rb.velocity = new Vector2(moveX * speed, rb.velocity.y);
+        else
+            rb.velocity = new Vector2(0, rb.velocity.y);
 
+        animator.SetFloat("Movement", Mathf.Abs(moveX));
+
+        // Comprobación de salto
         canJump = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         animator.SetBool("canJump", canJump);
-        animator.SetFloat("Movement", canJump ? Mathf.Abs(moveX) : 0f);
 
         if (canJump) canDoubleJump = true;
 
         if (Input.GetKeyDown(KeyCode.W) && canJump)
-{
-    rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-    audioSource.PlayOneShot(jumpSound);
-    animator.SetTrigger("Jump"); // <-- añade esto si usas trigger
-}
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            audioSource.PlayOneShot(jumpSound);
+            animator.SetTrigger("Jump");
+        }
 
-if (Input.GetKeyDown(KeyCode.W) && !canJump && canDoubleJump)
-{
-    rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-    canDoubleJump = false;
-    audioSource.PlayOneShot(jumpSound);
-    animator.SetTrigger("Jump"); // <-- añade esto si usas trigger
-}
+        if (Input.GetKeyDown(KeyCode.W) && !canJump && canDoubleJump)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            canDoubleJump = false;
+            audioSource.PlayOneShot(jumpSound);
+            animator.SetTrigger("Jump");
+        }
 
-
+        // Girar sprite
         if (moveX != 0)
             transform.localScale = new Vector3(Mathf.Sign(moveX) * 0.7f, 0.7f, 0.7f);
 
+        // Atacar
         if (Input.GetKeyDown(KeyCode.K))
         {
             Attack();
         }
 
+        // Caída
         if (transform.position.y <= -12.68f)
         {
             GameManager.Instance.LoseHealth();
@@ -138,22 +149,34 @@ if (Input.GetKeyDown(KeyCode.W) && !canJump && canDoubleJump)
     void Attack()
     {
         animator.SetTrigger("Attack");
+        Debug.Log("Atacando..."); // <-- Verifica si esto aparece en consola
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
         foreach (Collider2D enemy in hitEnemies)
         {
+            Debug.Log("Enemigo detectado: " + enemy.name); // <-- Verifica si detecta al enemigo
+
             Enemy enemyScript = enemy.GetComponent<Enemy>();
             if (enemyScript != null)
             {
                 enemyScript.TakeDamage();
             }
+
+            
         }
     }
+
 
     void OnDrawGizmosSelected()
     {
         if (attackPoint == null) return;
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
+    // Método para activar animación de golpe
+    public void GetHit()
+    {
+        animator.SetTrigger("GetHit");
     }
 }

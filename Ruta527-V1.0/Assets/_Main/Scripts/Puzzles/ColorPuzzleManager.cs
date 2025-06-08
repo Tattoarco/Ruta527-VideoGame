@@ -21,6 +21,7 @@ public class ColorPuzzleManager : MonoBehaviour
 
     [Header("Objetos")]
     public GameObject objectToActivate;
+    public GameObject objectToDeactivate;
     public GameObject puzzleUI; // El panel con los botones
     public TMP_Text attemptsText;
 
@@ -55,6 +56,15 @@ public class ColorPuzzleManager : MonoBehaviour
         GenerateRandomSequence();
         StartCoroutine(ShowSequence());
     }
+
+    public void DeactivateObject()
+    {
+        if (objectToDeactivate != null)
+        {
+            objectToDeactivate.SetActive(false);
+        }
+    }
+
 
     void GenerateRandomSequence()
     {
@@ -113,10 +123,12 @@ public class ColorPuzzleManager : MonoBehaviour
         }
 
         Debug.Log("✅ ¡Secuencia correcta!");
-        objectToActivate.SetActive(true); // Abre camino
-        puzzleUI.SetActive(false); // Oculta puzzle
+        objectToActivate.SetActive(true);      // Activa el objeto deseado
+        DeactivateObject();                    // 🔸 Ahora también desactiva el objeto indicado
+        puzzleUI.SetActive(false);             // Oculta el puzzle
         puzzleActive = false;
     }
+
 
     void UpdateAttemptsText()
     {
@@ -147,4 +159,6 @@ public class ColorPuzzleManager : MonoBehaviour
         orangeButton.interactable = value;
         pinkButton.interactable = value;
     }
+
+
 }

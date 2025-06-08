@@ -18,21 +18,5 @@ public class AddBottleWater : MonoBehaviour
             GameManager.Instance.AddPoints(value);
             Destroy(gameObject);
         }
-        else if (collision.CompareTag("Boss"))
-        {
-            FinalBoss boss = collision.GetComponent<FinalBoss>();
-            if (boss != null)
-            {
-                boss.TakeDamage(1);
-
-                // Reproduce el sonido también al impactar al jefe
-                if (pickupSound != null)
-                {
-                    AudioSource.PlayClipAtPoint(pickupSound, transform.position);
-                }
-
-                Destroy(gameObject);
-            }
-        }
     }
 }

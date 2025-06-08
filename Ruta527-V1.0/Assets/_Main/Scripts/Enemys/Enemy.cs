@@ -5,9 +5,11 @@ public class Enemy : MonoBehaviour
     public Transform pointA;
     public Transform pointB;
     public float speed = 2f;
-
+    public int health = 3;
     private Vector3 CurrentAssignment;
     private bool hasDamagedPlayer = false;
+    public GameObject deathParticlesPrefab;
+
 
     private void Start()
     {
@@ -20,10 +22,7 @@ public class Enemy : MonoBehaviour
 
         if (Vector3.Distance(transform.position, CurrentAssignment) < 0.1f)
         {
-            // Cambia el destino
             CurrentAssignment = CurrentAssignment == pointA.position ? pointB.position : pointA.position;
-
-            // Invierte visualmente el sprite en el eje X
             Vector3 theScale = transform.localScale;
             theScale.x *= -1;
             transform.localScale = theScale;
@@ -35,17 +34,27 @@ public class Enemy : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             GameManager.Instance.LoseHealth();
-            hasDamagedPlayer = true;
+            hasDamagedPlayer = true;  // Marca que este enemigo le quitó vida al jugador
         }
     }
+
 
     public void TakeDamage()
     {
+        Debug.Log("Enemigo recibió daño");
+
         if (hasDamagedPlayer)
         {
-            GameManager.Instance.RecoverHealth(); // Recupera vida si antes le hizo daño
+            GameManager.Instance.RecoverHealth();
         }
 
-        Destroy(gameObject); // Destruye el enemigo
+        // Instanciar partículas
+        if (deathParticlesPrefab != null)
+        {
+            Instantiate(deathParticlesPrefab, transform.position, Quaternion.identity);
+        }
+
+        Destroy(gameObject);
     }
+
 }

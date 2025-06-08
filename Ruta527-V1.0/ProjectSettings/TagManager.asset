@@ -9,6 +9,7 @@ TagManager:
   - Agua
   - Enemy
   - Boss
+  - 'GameController '
   layers:
   - Default
   - TransparentFX

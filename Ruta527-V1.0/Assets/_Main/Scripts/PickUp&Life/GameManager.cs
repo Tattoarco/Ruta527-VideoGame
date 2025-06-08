@@ -50,9 +50,16 @@ public class GameManager : MonoBehaviour
 
         if (health == 0)
         {
-            SceneManager.LoadScene(0);
+            // Eliminar checkpoint y reiniciar la escena actual
+            PlayerPrefs.DeleteKey("CheckpointX");
+            PlayerPrefs.DeleteKey("CheckpointY");
+            PlayerPrefs.DeleteKey("HasCheckpoint");
+
+            Scene currentScene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(currentScene.buildIndex);
         }
     }
+
 
 
     public bool RecoverHealth() {
@@ -65,4 +72,26 @@ public class GameManager : MonoBehaviour
         health += 1;
 		return true;
 	}
+
+    public void ReducePoints(int amount)
+    {
+        TotalPoints -= amount;
+        if (TotalPoints < 0)
+            TotalPoints = 0;
+
+        hud.UpdatePoints(TotalPoints); // si tienes referencia al HUD
+    }
+
+    public void ResetGame()
+    {
+        TotalPoints = 0;
+        health = 5;
+
+        hud.UpdatePoints(TotalPoints);
+        for (int i = 0; i < hud.health.Length; i++)
+        {
+            hud.ActiveHealth(i);
+        }
+    }
+
 }
